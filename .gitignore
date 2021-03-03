@@ -1,0 +1,12 @@
+$ cat .gitignore
+
+/PCB/__Previews/*
+/PCB/History/*
+/PCB/Project Logs for LEDMiniCube/*
+/PCB/Project Outputs for LEDMiniCube/*
+
+/NN/*
+!/NN/*.ipynb
+!/NN/*.h5
+!/NN/*.py
+!/NN/data/
