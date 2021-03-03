@@ -12,3 +12,5 @@ $ cat .gitignore
 !/NN/data/
 
 /LCube/Debug/
+
+!*.md
