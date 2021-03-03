@@ -10,3 +10,5 @@ $ cat .gitignore
 !/NN/*.h5
 !/NN/*.py
 !/NN/data/
+
+/LCube/Debug/
