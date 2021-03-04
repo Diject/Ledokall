@@ -3,7 +3,7 @@
 #include "arm_math.h"
 
 uint16_t microphone_data[MICROPHONE_CAPTURE_DATA_SIZE];
-int16_t microphone_audio[MICROPHONE_CAPTURE_DATA_HALFSIZE];
+int16_t microphone_audio[MICROPHONE_OUT_DATA_SIZE];
 uint8_t amplifier_code = MICROPHONE_AMPLIFIER_DEFAULT_CODE;
 uint32_t clipped_samples = 0;
 uint32_t clipped_tick = 0;
@@ -44,33 +44,38 @@ void Microphone_Clipping_Check()
 }
 
 /**
- * Convert ADC microphone data to signed values
+ * Converts ADC microphone data to signed values & filter them
  */
 void prepare_mic_data(uint16_t *in, int16_t *out, uint32_t size)
 {
 	while (size-- != 0)
 	{
+		int32_t sum;
 		int32_t res = (int32_t)*(in++) - MICROPHONE_CAPTURE_ADC_CENTER;
-		if (res < -0x7fff) res = -0x7fff;
-		else if (res > 0x7fff) res = 0x7fff;
-		*(out++) = (int16_t)res;
+		sum = IIR_Calc(res);
+		res = (int32_t)*(in++) - MICROPHONE_CAPTURE_ADC_CENTER;
+		sum += IIR_Calc(res);
+		sum /= 2;
+		if (sum < -0x7fff) sum = -0x7fff;
+		else if (sum > 0x7fff) sum = 0x7fff;
+		*(out++) = (int16_t)sum;
 	}
 }
 
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 //	Microphone_Clipping_Check();
-	prepare_mic_data(&microphone_data[0], microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE);
-	USBD_MICROPHONE_AddData(microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE);
-	audioProcessing_AddData(microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE, AUDIO_INPUT_MICROPHONE);
+	prepare_mic_data(&microphone_data[0], microphone_audio, MICROPHONE_OUT_DATA_SIZE);
+	USBD_MICROPHONE_AddData(microphone_audio, MICROPHONE_OUT_DATA_SIZE);
+	audioProcessing_AddData(microphone_audio, MICROPHONE_OUT_DATA_SIZE, AUDIO_INPUT_MICROPHONE);
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	Microphone_Clipping_Check();
-	prepare_mic_data(&microphone_data[MICROPHONE_CAPTURE_DATA_HALFSIZE], microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE);
-	USBD_MICROPHONE_AddData(microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE);
-	audioProcessing_AddData(microphone_audio, MICROPHONE_CAPTURE_DATA_HALFSIZE, AUDIO_INPUT_MICROPHONE);
+	prepare_mic_data(&microphone_data[MICROPHONE_CAPTURE_DATA_HALFSIZE], microphone_audio, MICROPHONE_OUT_DATA_SIZE);
+	USBD_MICROPHONE_AddData(microphone_audio, MICROPHONE_OUT_DATA_SIZE);
+	audioProcessing_AddData(microphone_audio, MICROPHONE_OUT_DATA_SIZE, AUDIO_INPUT_MICROPHONE);
 }
 
 inline int16_t* Microphone_Data()

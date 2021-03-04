@@ -1365,14 +1365,9 @@ void USBD_MICROPHONE_SEND(USBD_HandleTypeDef *pdev)
 			  RingBuffer_Int16_SeekRead(&micBuffer, micTxBuffer + USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE / 2 - size, size, size);
 		}
 	}
-	//IIR фильтр
-	for (uint32_t i = 0; i < USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE / 2; i++)
-	{
-		micTxBuffer[i] = IIR_Calc(micTxBuffer[i]);
-	}
-	USBD_LL_FlushEP(pdev, AUDIO_IN_EP);
+//	USBD_LL_FlushEP(pdev, AUDIO_IN_EP);
 	pdev->ep_in[AUDIO_IN_EP & 0xFU].total_length = USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE;
-	USBD_LL_Transmit(pdev, AUDIO_IN_EP, micTxBuffer, USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE);
+	USBD_LL_Transmit(pdev, AUDIO_IN_EP, (uint8_t *)micTxBuffer, USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

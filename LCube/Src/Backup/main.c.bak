@@ -104,12 +104,17 @@ inline uint32_t HAL_GetTick()
 	return get_device_counter();
 }
 
+/**
+ * Определение рабочего usb
+ */
 void detect_usb_input()
 {
+	//По очереди включаем usb входы и проверяем на наличие sof-пакетов
 	static uint32_t step = 0;
 	static uint32_t timTick = 0xffff;
 	if (device.USBInput != USB_INPUT_UNDEFINED)
 	{
+		//Проверка, работает ли текущее соединение
 		if (((get_device_counter() - timTick) > 20000) && step == 0)
 		{
 			device.USBInput = USB_INPUT_NONE;
@@ -127,6 +132,7 @@ void detect_usb_input()
 		}
 	}else
 	{
+		//Определение рабочего usb
 		if (step == 0)
 		{
 			HAL_GPIO_WritePin(USB_Select_GPIO_Port, USB_Select_Pin, 0);
@@ -184,7 +190,7 @@ void buttons_control()
 {
 	uint8_t pcnt[3] = {0};
 	uint16_t ptime[3] = {0};
-	uint8_t pbtn = buttons_stateEx(pcnt, ptime);
+	uint8_t pbtn = buttons_stateEx(pcnt, ptime); //Нажатые кнопки
 	if ((pbtn == (BUTTON0 | BUTTON2)) && (ptime[0] > 0x0200) && (ptime[2] > 0x0200))
 	{
 		VisualizationStop(device.visualizationStatus ? DISABLE : ENABLE);
@@ -204,6 +210,48 @@ void buttons_control()
 	{
 		if (device.audio.muteAudio) NN_Action_UnMuteSound(0);
 		else NN_Action_MuteSound(0);
+	}
+}
+
+/**
+ * �?нициализация SD карты
+ */
+void sdcard_init()
+{
+	static uint32_t updateSDCardTick = 0xffff;
+	if (device.sdcard.sdcardInitialization > 0)
+	{
+		if (device.sdcard.sdcardInitialization == SDCARD_INITIALIZATION_START)
+		{
+			HAL_GPIO_WritePin(SDCard_Pow_GPIO_Port, SDCard_Pow_Pin, 1);
+			updateSDCardTick = get_device_counter();
+			device.sdcard.sdcardInitialization = SDCARD_INITIALIZATION_POWERON;
+		}else if (device.sdcard.sdcardInitialization == SDCARD_INITIALIZATION_POWERON)
+		{
+			if ((get_device_counter() - updateSDCardTick) > 2000)
+			{
+				MX_FATFS_Init();
+				if (f_mount(&SDFatFS, (const TCHAR*)SDPath, 1) == FR_OK)
+				{
+					device.sdcard.sdcardInitialization = SDCARD_INITIALIZATION_MOUNTED;
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Обновление данных температуры/влажности
+ */
+void update_sensor_data()
+{
+	static uint32_t updateTempTick = 0xffffff;
+	if ((get_device_counter() - updateTempTick) > 30000)
+	{
+		static uint32_t step = 0;
+		if (step++ & 1) HDC1080_TriggerMeasurement();
+		else HDC1080_ReadData_TriggerDMAReceive();
+		updateTempTick = get_device_counter();
 	}
 }
 
@@ -285,8 +333,8 @@ int main(void)
 
 
   //Отладка
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+//  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+//  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
   /* USER CODE END 2 */
 
@@ -294,35 +342,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  static uint32_t updateTempTick = 0xffffff;
-	  if ((get_device_counter() - updateTempTick) > 30000)
-	  {
-		  static uint32_t step = 0;
-		  if (step++ & 1) HDC1080_TriggerMeasurement();
-		  else HDC1080_ReadData_TriggerDMAReceive();
-		  updateTempTick = get_device_counter();
-	  }
+	  update_sensor_data();
 
-	  static uint32_t updateSDCardTick = 0xffff;
-	  if (device.sdcard.sdcardInitialization > 0)
-	  {
-		  if (device.sdcard.sdcardInitialization == SDCARD_INITIALIZATION_START)
-		  {
-			  HAL_GPIO_WritePin(SDCard_Pow_GPIO_Port, SDCard_Pow_Pin, 1);
-			  updateSDCardTick = get_device_counter();
-			  device.sdcard.sdcardInitialization = SDCARD_INITIALIZATION_POWERON;
-		  }else if (device.sdcard.sdcardInitialization == SDCARD_INITIALIZATION_POWERON)
-		  {
-			  if ((get_device_counter() - updateSDCardTick) > 2000)
-			  {
-				  MX_FATFS_Init();
-				  if (f_mount(&SDFatFS, (const TCHAR*)SDPath, 1) == FR_OK)
-				  {
-					  device.sdcard.sdcardInitialization = SDCARD_INITIALIZATION_MOUNTED;
-				  }
-			  }
-		  }
-	  }
+	  sdcard_init();
 
 	  buttons_control();
 
