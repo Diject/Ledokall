@@ -1365,7 +1365,7 @@ void USBD_MICROPHONE_SEND(USBD_HandleTypeDef *pdev)
 			  RingBuffer_Int16_SeekRead(&micBuffer, micTxBuffer + USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE / 2 - size, size, size);
 		}
 	}
-//	USBD_LL_FlushEP(pdev, AUDIO_IN_EP);
+	USBD_LL_FlushEP(pdev, AUDIO_IN_EP);
 	pdev->ep_in[AUDIO_IN_EP & 0xFU].total_length = USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE;
 	USBD_LL_Transmit(pdev, AUDIO_IN_EP, (uint8_t *)micTxBuffer, USBD_AUDIO_CONFIG_RECORD_MAX_PACKET_SIZE);
 }
