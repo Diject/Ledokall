@@ -5,12 +5,12 @@
 #include "tim.h"
 #include "dma.h"
 
-//#define LED_UPDATE_FREQUENCY 12000U
-#define LED_COUNTER_REG_MAX_VALUE 9999U //Максимальное значение счетчика таймера
-#define LED_COUNTER_CALIBRATION_SHIFT 225.f //Сдвиг для калибровки яркости. >0 - >красного. <0 - синего
+//#define LED_UPDATE_FREQUENCY 10000U
+#define LED_COUNTER_REG_MAX_VALUE 5999U //Максимальное значение счетчика таймера
+#define LED_COUNTER_CALIBRATION_SHIFT 112.f //Сдвиг для калибровки яркости. >0 - >красного. <0 - синего
 #define LED_MODEL_FRAME_SIZE 7U //Высота куба
 #define LED_MODEL_STEP_SIZE 8U //Количество фреймов для шага ярокости
-#define LED_DMA_BUFFER_HALFSIZE_STEPS 10U //Количество шагов в модели
+#define LED_DMA_BUFFER_HALFSIZE_STEPS 16U //Количество шагов в модели
 #define LED_DMA_BUFFER_HALFSIZE (LED_DMA_BUFFER_HALFSIZE_STEPS * LED_MODEL_STEP_SIZE * LED_MODEL_FRAME_SIZE)
 #define LED_DMA_BUFFER_SIZE (LED_DMA_BUFFER_HALFSIZE * 2U)
 

@@ -37,7 +37,7 @@ REAL gain=1./115.3426505626748;
 REAL xv[]={0,0,0,0,0,0,0,0,0};
 REAL yv[]={0,0,0,0,0,0,0,0,0};
 
-int16_t IIR_Calc(int16_t v)
+int32_t IIR_Calc(int32_t v)
 {
 	int i;
 	REAL out=0;
@@ -47,5 +47,5 @@ int16_t IIR_Calc(int16_t v)
 	for (i=0; i<=NZERO; i++) {out+=xv[i]*bcoeff[i];}
 	for (i=0; i<NPOLE; i++) {out-=yv[i]*acoeff[i];}
 	yv[NPOLE]=out;
-	return (int16_t)out;
+	return (int32_t)out;
 }

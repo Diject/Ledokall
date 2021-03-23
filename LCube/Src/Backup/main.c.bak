@@ -214,7 +214,7 @@ void buttons_control()
 }
 
 /**
- * �?нициализация SD карты
+ * �?нициализация SD карты
  */
 void sdcard_init()
 {
@@ -348,8 +348,7 @@ int main(void)
 
 	  buttons_control();
 
-	  if (device.USBInput == USB_INPUT_UNDEFINED)
-		  detect_usb_input();
+	  detect_usb_input();
 
     /* USER CODE END WHILE */
 

@@ -12,7 +12,7 @@ SpectrogramTypeDef spectrS = {0};
 MelFilterTypeDef melfS = {0};
 MelSpectrogramTypeDef melS = {0};
 LogMelSpectrogramTypeDef lmelS = {0};
-float  aProcessingBuffer[AUDIO_PROCESSING_FFT_SIZE];
+//float  aProcessingBuffer[AUDIO_PROCESSING_FFT_SIZE];
 
 
 int16_t audioProcessingDataBuffer[AUDIO_PROCESSING_BUFFER_SIZE] = {0};
@@ -115,12 +115,12 @@ ringBufferStatus audioProcessing_AddData(int16_t *data, uint32_t size, audioInpu
 	{
 		RingBuffer_Int16_Write(&buffer, data, size);
 		uint32_t bsize = (device.audio.audioInput == AUDIO_INPUT_MICROPHONE) ? AUDIO_PROCESSING_FFT_SIZE / 2 : AUDIO_PROCESSING_FFT_SIZE;
-		if (RingBuffer_DataSize(&buffer) >= bsize) HAL_TIM_Base_Start_IT(&htim11);
+		if (RingBuffer_DataSize(&buffer) >= bsize) HAL_TIM_Base_Start_IT(&htim11); //trigger audioProcessing_Run();
 	}
 	if ((source == AUDIO_INPUT_MICROPHONE) && (device.neuralNetworkStatus == NEURAL_NETWORK_ENABLE))
 	{
 		RingBuffer_Int16_Write(&NNBuffer, data, size);
-		if (RingBuffer_DataSize(&NNBuffer) >= AUDIO_PROCESSING_FFT_SIZE) HAL_TIM_Base_Start_IT(&htim12);
+		if (RingBuffer_DataSize(&NNBuffer) >= AUDIO_PROCESSING_FFT_SIZE) HAL_TIM_Base_Start_IT(&htim12); //trigger NN_Processing();
 	}
 	return RINGBUFFER_OK;
 }
@@ -242,7 +242,7 @@ uint8_t audioProcessing_Run()
 uint32_t NN_Processing()
 {
 	if ((RingBuffer_DataSize(&NNBuffer) < AUDIO_PROCESSING_FFT_SIZE) || ((device.neuralNetworkStatus != NEURAL_NETWORK_ENABLE))) return 0;
-
+	if ((RingBuffer_DataSize(&NNBuffer) > 3000)) HAL_NVIC_SystemReset();
 	int16_t *data_in = malloc(AUDIO_PROCESSING_FFT_SIZE * sizeof(int16_t));
 	float *mfccs = malloc(AUDIO_PROCESSING_MFCC_COUNT * sizeof(float));
 	if ((data_in == NULL) || (mfccs == NULL)){ free(data_in); free(mfccs); return 1;}
@@ -331,7 +331,8 @@ void audioProcessing_Init()
 	spectrS.SampRate = 16000;
 	spectrS.FrameLen = AUDIO_PROCESSING_FFT_SIZE;
 	spectrS.FFTLen   = AUDIO_PROCESSING_FFT_SIZE;
-	spectrS.pScratch = aProcessingBuffer; //unused
+	spectrS.pScratch = NULL;
+//	spectrS.pScratch = aProcessingBuffer; //unused
 
 	melfS.pStartIndices = (uint32_t *) melFiltersStartIndices_1024_30;
 	melfS.pStopIndices  = (uint32_t *) melFiltersStopIndices_1024_30;

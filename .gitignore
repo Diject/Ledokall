@@ -6,6 +6,7 @@ $ cat .gitignore
 /PCB/Project Outputs for LEDMiniCube/*
 
 /NN/*
+!/NN/LICENSE
 !/NN/*.ipynb
 !/NN/*.h5
 !/NN/*.py

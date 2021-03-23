@@ -169,8 +169,8 @@ void InitLEDVisualization(visualizationType newVis)
 
 void VisualizationModelUpdate()
 {
-	if (*(uint32_t *)&LEDModel.loaded == MODEL_FULLYLOADED)
-	{
+//	if (*(uint32_t *)&LEDModel.loaded == MODEL_FULLYLOADED)
+//	{
 		if ((get_device_counter() - pause_timeout_tick) > pause_timeout_interval)
 		{
 			pause_timeout_interval = 0;
@@ -204,7 +204,7 @@ void VisualizationModelUpdate()
 			}
 			*(uint32_t *)&LEDModel.loaded = 0;
 		}
-	}
+//	}
 }
 
 

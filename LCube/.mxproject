@@ -16,8 +16,8 @@ SourceFiles=null;
 SourceFiles=null;
 
 [PreviousGenFiles]
-HeaderPath=D:/Projects/LCube/Inc
+HeaderPath=D:/Git/Ledokall/LCube/Inc
 HeaderFiles=gpio.h;adc.h;crc.h;dma.h;ffconf.h;bsp_driver_sd.h;sd_diskio.h;fatfs.h;i2c.h;i2s.h;rtc.h;sdio.h;tim.h;usb_otg.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;
-SourcePath=D:/Projects/LCube/Src
+SourcePath=D:/Git/Ledokall/LCube/Src
 SourceFiles=gpio.c;adc.c;crc.c;dma.c;bsp_driver_sd.c;sd_diskio.c;fatfs.c;i2c.c;i2s.c;rtc.c;sdio.c;tim.c;usb_otg.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;
 

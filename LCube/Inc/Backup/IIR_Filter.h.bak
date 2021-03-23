@@ -3,6 +3,6 @@
 
 #include "stdint.h"
 
-int16_t IIR_Calc(int16_t in);
+int32_t IIR_Calc(int32_t in);
 
 #endif

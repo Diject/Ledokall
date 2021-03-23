@@ -104,13 +104,13 @@ void rowRegSHalfCpltCallback(DMA_HandleTypeDef *hdma)
 void floorRegSCpltCallback(DMA_HandleTypeDef *hdma)
 {
 	loadRegData_uint8(currentModel->floorRegArray_second, &currentModel->floorRegIndex_second, currentModel->regQuantity, LEDData.floorReg_second, LED_DMA_BUFFER_HALFSIZE, &currentModel->loaded.secondFloorReg);
-	HAL_TIM_Base_Start_IT(&htim10);
+	HAL_TIM_Base_Start_IT(&htim10); //trigger VisualizationModelUpdate();
 }
 
 void floorRegSHalfCpltCallback(DMA_HandleTypeDef *hdma)
 {
 	loadRegData_uint8(currentModel->floorRegArray_second, &currentModel->floorRegIndex_second, currentModel->regQuantity, LEDData.floorReg_second, 0, &currentModel->loaded.secondFloorReg);
-	HAL_TIM_Base_Start_IT(&htim10);
+	HAL_TIM_Base_Start_IT(&htim10); //trigger VisualizationModelUpdate();
 }
 
 void cntRegCpltCallback(DMA_HandleTypeDef *hdma)
@@ -138,13 +138,13 @@ void LED_Init()
 	hdma_tim1_ch4_trig_com.XferCpltCallback = floorRegSCpltCallback;
 	hdma_tim1_ch4_trig_com.XferHalfCpltCallback = floorRegSHalfCpltCallback;
 
-	//Data transmission DMA register
+	//Start DMA data transmission to GPIO reg
 	HAL_DMA_Start_IT(&hdma_tim1_ch1, (uint32_t)&LEDData.rowReg_first, (uint32_t)&GPIOB->ODR, LED_DMA_BUFFER_SIZE);
 	HAL_DMA_Start_IT(&hdma_tim1_ch2, (uint32_t)&LEDData.floorReg_first, (uint32_t)&GPIOC->ODR, LED_DMA_BUFFER_SIZE);
 	HAL_DMA_Start_IT(&hdma_tim1_ch3, (uint32_t)&LEDData.rowReg_second, (uint32_t)&GPIOB->ODR, LED_DMA_BUFFER_SIZE);
 	HAL_DMA_Start_IT(&hdma_tim1_ch4_trig_com, (uint32_t)&LEDData.floorReg_second, (uint32_t)&GPIOC->ODR, LED_DMA_BUFFER_SIZE);
 
-	//DMA channel counter data burst transmission
+	//DMA data burst transmission
 //	HAL_TIM_DMABurst_WriteStart(&htim1, TIM_DMABASE_CCR3, TIM_DMA_UPDATE, (uint32_t *)&LEDData.cntReg, TIM_DMABURSTLENGTH_2TRANSFERS);
 	//From HAL function
 	//Set HAL callbacks
