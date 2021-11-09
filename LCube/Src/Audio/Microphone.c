@@ -8,21 +8,15 @@ uint8_t amplifier_code = MICROPHONE_AMPLIFIER_DEFAULT_CODE;
 uint32_t clipped_samples = 0;
 uint32_t clipped_tick = 0;
 
-void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
-{
-	clipped_samples++;
-	clipped_tick = get_device_counter();
-}
-
 void Microphone_Clipping_Check()
 {
 	if (clipped_samples >= MICROPHONE_CLIPPED_FRAMES_LIMIT)
 	{
 		if  (I2C_Ready_State() == HAL_I2C_STATE_READY)
 		{
-			if (amplifier_code > 1)
+			if (amplifier_code > 0)
 			{
-				if (MCP40D17_SetResistanceCode_DMA(amplifier_code - 1) == HAL_OK) amplifier_code--;
+				if (MCP40D17_SetResistanceCode_DMA(amplifier_code - 1) == HAL_OK) amplifier_code -= 1;
 			}
 		}
 	}else if (amplifier_code < MICROPHONE_AMPLIFIER_DEFAULT_CODE)
@@ -43,6 +37,12 @@ void Microphone_Clipping_Check()
 	clipped_samples = 0;
 }
 
+void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
+{
+	clipped_samples++;
+	clipped_tick = get_device_counter();
+}
+
 /**
  * Converts ADC microphone data to signed values & filter them
  */
@@ -52,10 +52,11 @@ void prepare_mic_data(uint16_t *in, int16_t *out, uint32_t size)
 	{
 		int32_t sum;
 		int32_t res = (int32_t)*(in++) - MICROPHONE_CAPTURE_ADC_CENTER;
-		sum = IIR_Calc(res);
+		sum = IIR_LP_Calc(res);
 		res = (int32_t)*(in++) - MICROPHONE_CAPTURE_ADC_CENTER;
-		sum += IIR_Calc(res);
+		sum += IIR_LP_Calc(res);
 		sum /= 2;
+		sum = IIR_HP_Calc(sum);
 		if (sum < -0x7fff) sum = -0x7fff;
 		else if (sum > 0x7fff) sum = 0x7fff;
 		*(out++) = (int16_t)sum;
@@ -109,6 +110,5 @@ void Microphone_Init()
 	amplifier_code = MICROPHONE_AMPLIFIER_DEFAULT_CODE;
 	MCP40D17_SetResistanceCode(amplifier_code);
 }
-
 
 

@@ -25,6 +25,7 @@
 #include "fatfs.h"
 #include "i2c.h"
 #include "i2s.h"
+#include "rng.h"
 #include "rtc.h"
 #include "tim.h"
 #include "gpio.h"
@@ -300,6 +301,7 @@ int main(void)
   MX_TIM10_Init();
   MX_TIM11_Init();
   MX_TIM12_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
   //�?нициализация нейросети
   MX_SDIO_SD_Init();

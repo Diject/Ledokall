@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "tim.h"
+#include "rng.h"
 
 #include "usbd_audio.h"
 #include "AudioProcessing.h"
@@ -17,14 +18,15 @@
 #define MICROPHONE_OUT_DATA_SIZE (MICROPHONE_CAPTURE_DATA_SIZE / 4)
 #define MICROPHONE_CAPTURE_ADC_CENTER ((0xFFFF / 2) - 704)
 
-#define MICROPHONE_AMPLIFIER_DEFAULT_CODE 0x20
+#define MICROPHONE_AMPLIFIER_DEFAULT_CODE 0xff
 
 #define MICROPHONE_CLIPPED_FRAMES_LIMIT 2U
-#define MICROPHONE_UNCLIPPED_TIME_LIMIT 30000U //msec
+#define MICROPHONE_UNCLIPPED_TIME_LIMIT 10000U //msec
 
-void Microphone_Init();
 void Microphone_Start_Capture();
 void Microphone_Stop_Capture();
+
+void Microphone_Fill_RNG();
 
 bool Microphone_Data_Ready(bool reset_ready);
 int16_t* Microphone_Data();

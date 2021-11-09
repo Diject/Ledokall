@@ -37,7 +37,7 @@ REAL gain=1./115.3426505626748;
 REAL xv[]={0,0,0,0,0,0,0,0,0};
 REAL yv[]={0,0,0,0,0,0,0,0,0};
 
-int32_t IIR_Calc(int32_t v)
+int32_t IIR_LP_Calc(int32_t v)
 {
 	int i;
 	REAL out=0;
@@ -47,5 +47,28 @@ int32_t IIR_Calc(int32_t v)
 	for (i=0; i<=NZERO; i++) {out+=xv[i]*bcoeff[i];}
 	for (i=0; i<NPOLE; i++) {out-=yv[i]*acoeff[i];}
 	yv[NPOLE]=out;
+	return (int32_t)out;
+}
+
+#define NBQ 2
+REAL biquada[]={0.9827049667429711,-1.9821898189843226,0.9587505535851496,-1.9582416296784886};
+REAL biquadb[]={1,-2,1,-2};
+REAL gain_hp=1./1.0302333646208348;
+REAL xyv[]={0,0,0,0,0,0,0,0,0};
+
+int32_t IIR_HP_Calc(int32_t v)
+{
+	int i,b,xp=0,yp=3,bqp=0;
+	REAL out=(float)v*gain_hp;
+	for (i=8; i>0; i--) {xyv[i]=xyv[i-1];}
+	for (b=0; b<NBQ; b++)
+	{
+		int len=2;
+		xyv[xp]=out;
+		for(i=0; i<len; i++) { out+=xyv[xp+len-i]*biquadb[bqp+i]-xyv[yp+len-i]*biquada[bqp+i]; }
+		bqp+=len;
+		xyv[yp]=out;
+		xp=yp; yp+=len+1;
+	}
 	return (int32_t)out;
 }

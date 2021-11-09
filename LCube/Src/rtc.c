@@ -83,7 +83,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 /* USER CODE BEGIN 1 */
 
 /**
- * Установка калибровачных значений
+ * Установка калибровочных значений
  * secs - необходимое значение смещения за день в секундах
  */
 void set1dCalibSec(float secs)

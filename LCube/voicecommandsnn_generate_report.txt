@@ -1,15 +1,15 @@
 Neural Network Tools for STM32 v1.3.0 (AI tools v5.1.2)
-Created date       : 2021-03-18 10:36:16
-Parameters         : generate --name voicecommandsnn -m D:/Projects/NN_Ledokol/model.h5 --type keras --compression 1 --verbosity 1 --workspace C:\Users\alexk\AppData\Local\Temp\mxAI_workspace73859280678007170198643677831107 --output C:\Users\alexk\.stm32cubemx\stm32ai_output
+Created date       : 2021-06-05 20:33:45
+Parameters         : generate --name voicecommandsnn -m D:/Projects/NN_Ledokol/model.h5 --type keras --compression 1 --verbosity 1 --workspace C:\Users\alexk\AppData\Local\Temp\mxAI_workspace3422473603719914613921850721209436 --output C:\Users\alexk\.stm32cubemx\stm32ai_output
 
-Exec/report summary (generate dur=0.41s err=0)
+Exec/report summary (generate dur=0.44s err=0)
 ------------------------------------------------------------------------------------------------------------------------
 model file         : D:\Projects\NN_Ledokol\model.h5
 type               : keras (keras_dump) - Keras.io 2.3.1
 c_name             : voicecommandsnn
 compression        : None
 quantize           : None
-workspace dir      : C:\Users\alexk\AppData\Local\Temp\mxAI_workspace73859280678007170198643677831107
+workspace dir      : C:\Users\alexk\AppData\Local\Temp\mxAI_workspace3422473603719914613921850721209436
 output dir         : C:\Users\alexk\.stm32cubemx\stm32ai_output
 
 model_name         : model

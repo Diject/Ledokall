@@ -3,6 +3,7 @@
 
 #include "stdint.h"
 
-int32_t IIR_Calc(int32_t in);
+int32_t IIR_LP_Calc(int32_t in);
+int32_t IIR_HP_Calc(int32_t v);
 
 #endif

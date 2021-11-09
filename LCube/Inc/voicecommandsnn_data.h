@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    voicecommandsnn_data.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Thu Mar 18 10:36:16 2021
+  * @date    Sat Jun  5 20:33:45 2021
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
